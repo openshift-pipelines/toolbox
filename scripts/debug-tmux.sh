@@ -40,6 +40,12 @@ tmux new-session -d -s ${SESSION_NAME} -n main
 tmux setenv -t ${SESSION_NAME} KUBECONFIG ${KUBECONFIG}
 tmux send-keys -t ${SESSION_NAME}:main "export KUBECONFIG=${KUBECONFIG}" C-m
 tmux send-keys -t ${SESSION_NAME}:main "tmux new-window -n controllers-logs kail --since=1h --ns=${TEKTON_NAMESPACE}" C-m
+if [[ $TEKTON_NAMESPACE == "openshift-pipelines" ]]; then
+    tmux send-keys -t ${SESSION_NAME}:main "tmux new-window -n operator-logs kail --since=1h --ns=openshift-operators --deploy=openshift-pipelines-operator" C-m
+elif [[ $TEKTON_NAMESPACE == "tekton-pipelines" ]]; then
+    tmux send-keys -t ${SESSION_NAME}:main "tmux new-window -n operator-logs kail --since=1h --ns=tekton-operator" C-m
+fi
+
 tmux send-keys -t ${SESSION_NAME}:main "tmux select-window -t main" C-m
 tmux send-keys -t ${SESSION_NAME}:main C-l
 
